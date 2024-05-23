@@ -45,17 +45,17 @@ class blockchain:
         while True:
             lastBlock = self.fetch_last_block()
             if lastBlock:
-                # Check if lastBlock is a list (containing blocks) and not empty
-                if isinstance(lastBlock, list) and lastBlock:
-                    blockHeight = lastBlock[0].get("height", 0) + 1
-                    previousblockHash = lastBlock[0]["blockHeader"]["blockhash"]
+                # Ensure lastBlock is in expected dictionary format
+                if isinstance(lastBlock, dict) and "blockHeader" in lastBlock:
+                    blockHeight = lastBlock.get("height", 0) + 1
+                    previousblockHash = lastBlock["blockHeader"]["blockhash"]
                     self.addBlock(blockHeight, previousblockHash)
                 else:
                     print("Empty or unexpected data format returned by fetch_last_block()")
-                    # Handle this case according to your application's logic
+                    break
             else:
                 print("Failed to fetch the last block.")
-                # Handle this case according to your application's logic
+                break
 
         
 
