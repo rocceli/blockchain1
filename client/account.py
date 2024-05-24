@@ -6,7 +6,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
 
 from backend.core.EllepticCurve.EllepticCurve import Sha256Point
-from backend.core.util.util import hash160
+from backend.core.util.util import hash160,hash256
 import secrets
 
 class Account:
@@ -31,7 +31,24 @@ class Account:
         address = mainnet_prefix + h160
         """Checksum"""
         checksum = hash256(address)[:4]
+        new_address = address + checksum
+        BASE58_ALPHABET = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+        count = 0
+        for byte in new_address:
+            if byte == 0:
+                count += 1
+            else:
+                break
+        num = int.from_bytes(new_address, 'big')
+        prefix = '1' * count
+        result = ''
+        while num > 0:
+            num, mod = divmod(num, 58)
+            result = BASE58_ALPHABET[mod] + result
 
+        publicAddress = prefix + result
+        print("Private Key: ", private_key)
+        print(f"Public Key: {publicAddress}")
 if __name__ == "__main__":
     acc = Account()
     acc.create_keys()
